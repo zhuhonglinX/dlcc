@@ -80,6 +80,7 @@ void print_ins(Ins ins) {
         case Ins::PUSHL : printf("PUSHL "); break;
         case Ins::PUSHS : printf("PUSHS "); break;
         case Ins::PUSHV : printf("PUSHV "); break;
+        case Ins::INT : printf("INT "); break;
         case Ins::MOV : printf("MOV "); break;
         case Ins::LAB : printf("LAB "); break;
         case Ins::FUNC : printf("FUNC "); break;

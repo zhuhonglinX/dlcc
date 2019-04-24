@@ -60,6 +60,7 @@ enum class Ins : int {
     PUSHL,  // int 立即数压栈
     PUSHS,  // str 常量压栈
     PUSHV,  // var 变量压栈(int)
+    INT,
     MOV,    // 变量出栈，存储(int)
     LAB,    // label L0:
     FUNC,

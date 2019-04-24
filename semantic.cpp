@@ -24,23 +24,14 @@ void Semantic::gen_symbol(AstNode *node, VarEnv *cur_env) {
         case AstType::FUNC : {
             // 将函数加入函数符号表
             auto *func = dynamic_cast<FuncAst *>(node);
-//            func_tbl.insert(make_pair(func->name_, func_symbol.size()));
-//            func_symbol.emplace_back(func->name_);
-
             auto *env = new VarEnv();
             cur_env->add_child_env(env);
-
-            func->env_ = env;
-
+            func->env_ = cur_env;
             // args
             for (auto &arg : func->args_) {
                 env->var_symbol_.insert(make_pair(arg.second, arg.first));
-                arg.second += to_string(env->scope_id_);
-
-//                var_tbl.insert(make_pair(arg.second, var_symbol.size()));
-                var_symbol.insert(make_pair(arg.second, 0));
+                var_symbol.insert(make_pair(arg.second + to_string(env->scope_id_), 0));
             }
-
             // block
             auto *block = dynamic_cast<BlockAst *>(func->block_ast_);
             for (auto stat : block->stats_) {
@@ -80,6 +71,13 @@ void Semantic::gen_symbol(AstNode *node, VarEnv *cur_env) {
             }
             break;
         }
+        case AstType::WhileExp : {
+            auto *while_exp = dynamic_cast<WhileExpAst *>(node);
+            while_exp->env_ = cur_env;
+            gen_symbol(while_exp->cond_, cur_env);
+            gen_symbol(while_exp->block_, cur_env);
+            break;
+        }
         case AstType::BLOCK : {
             auto *env = new VarEnv();
             cur_env->add_child_env(env);
@@ -101,8 +99,6 @@ void Semantic::gen_symbol(AstNode *node, VarEnv *cur_env) {
                 exit(0);
             }
             var->env_ = target_env;
-            var->name_ += to_string(target_env->scope_id_);
-
             break;
         }
         case AstType::STR : {

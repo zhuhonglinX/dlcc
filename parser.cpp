@@ -232,7 +232,10 @@ AstNode *Parser::parse_while_exp() {
 #ifdef DEBUG
     cout << "parse if exp: " << cur_token_.second <<  endl;
 #endif
-    return nullptr;
+    get_next_token();  // eat "while"
+    AstNode *cond = parse_paren_exp();
+    AstNode *block = parse_block();
+    return new WhileExpAst(cond, block);;
 }
 
 AstNode *Parser::parse_paren_exp() {

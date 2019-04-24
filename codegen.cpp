@@ -169,6 +169,17 @@ string CodeGen::ast_to_asm(AstNode *node) {
             }
             break;
         }
+        case AstType::WhileExp : {
+            auto *while_exp = dynamic_cast<WhileExpAst *>(node);
+            string label = get_jmp_label();
+            rst += label + ":\n";
+            rst += ast_to_asm(while_exp->cond_);
+            string label_2 = get_jmp_label();
+            rst += "popl %eax\ncmpl $0, %eax\nje " + label_2 + "\n";
+            rst += ast_to_asm(while_exp->block_);
+            rst += "jmp " + label + "\n";
+            rst += label_2 + ":\n";
+        }
         case AstType::BLOCK : {
             auto *block = dynamic_cast<BlockAst *>(node);
             for (auto stat : block->stats_) {
@@ -183,7 +194,8 @@ string CodeGen::ast_to_asm(AstNode *node) {
         }
         case AstType::VAR : {
             auto *var = dynamic_cast<VarAst *>(node);
-            rst += "pushl $" + var->name_ + "\n";
+            string name = var->name_ + to_string(var->env_->scope_id_);
+            rst += "pushl " + name + "\n";
             break;
         }
         case AstType::STR : {
@@ -231,7 +243,9 @@ void CodeGen::ast_to_vm(AstNode *node) {
 
             // 载入参数 顺序
             for (auto &arg : func->args_) {
-                // Ins: LOAD <var id>
+                // Ins: INT <var>
+                // Ins: LOAD <var>
+                vm_code.emplace_back(make_pair(Ins::INT, arg.second));
                 vm_code.emplace_back(make_pair(Ins::MOV, arg.second));
             }
             ast_to_vm(func->block_ast_);
@@ -359,6 +373,20 @@ void CodeGen::ast_to_vm(AstNode *node) {
             break;
         }
         case AstType::WhileExp : {
+            auto *while_exp = dynamic_cast<WhileExpAst *>(node);
+            string label = get_jmp_label();  // 重回 while 的标签
+            // Ins: LAB L1
+            vm_code.emplace_back(make_pair(Ins::LAB, label));
+            ast_to_vm(while_exp->cond_);
+            // Ins: jE L2
+            string label_2 = get_jmp_label();  // 跳出 while 的标签
+            vm_code.emplace_back(make_pair(Ins::JE, label_2));
+
+            ast_to_vm(while_exp->block_);
+            // Ins: JMP L1
+            // Ins: LAB L2
+            vm_code.emplace_back(make_pair(Ins::JMP, label));
+            vm_code.emplace_back(make_pair(Ins::LAB, label_2));
             break;
         }
         default: {

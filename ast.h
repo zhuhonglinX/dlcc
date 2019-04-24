@@ -99,6 +99,18 @@ public:
     void print() override;
 };
 
+class WhileExpAst : public AstNode {
+public:
+    AstNode *cond_, *block_;
+    VarEnv *env_ = nullptr;
+
+    explicit WhileExpAst(AstNode *cond, AstNode *block) : cond_(cond), block_(block) {}
+    ~WhileExpAst() override  {delete cond_; delete block_;}
+
+    AstType get_ast_type() override { return AstType::WhileExp; }
+
+};
+
 class BlockAst : public AstNode {
 public:
     vector<AstNode *> stats_;
