@@ -152,7 +152,7 @@ int main(int argc, char *argv[]) {
     istreambuf_iterator<char> end;
     content = string(begin, end);
 
-//    cout << content;
+    // cout << content;
     Lexer lexer;
     if (!lexer.lex()) {
         printf("lex error\n");
@@ -161,26 +161,28 @@ int main(int argc, char *argv[]) {
     lexer.lex_debug();
 
     Parser parser;
-//    parser.preprocess();
+    // parser.preprocess();
     parser.parse();
     parser.parse_debug();
 
     Semantic::traverse_ast();
     Semantic::symbol_debug();
 
-    CodeGen::gen_vm_code();
-    for (auto &item : vm_code) {
-        print_ins(item.first);
-        cout << item.second << endl;
+    if (assembly_mode) {
+        CodeGen::gen_asm_code();
+        cout << asm_code;
+        ofstream out(out_file_name);
+        out << asm_code;
     }
 
-//    CodeGen::gen_asm_code();
-//    cout << asm_code;
-
-    VM vm;
-    vm.run();
-
-
-
+    if (interpret_mode) {
+        CodeGen::gen_vm_code();
+        for (auto &item : vm_code) {
+            print_ins(item.first);
+            cout << item.second << endl;
+        }
+        VM vm;
+        vm.run();
+    }
     return 0;
 }

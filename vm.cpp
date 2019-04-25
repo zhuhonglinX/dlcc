@@ -17,7 +17,8 @@ void VM::scan() {
         if (it.first == Ins::FUNC || it.first == Ins::LAB) {
             mark_.insert(make_pair(it.second, line));
             if (it.second == "main") {
-                pc = line;
+                pc = line;  // 起始指令
+                // 初始化函数栈和函数栈指针
                 map<string, int> symbol = {{it.second, 0}};
                 func_st_.emplace_back(symbol);
                 cur_fptr = func_st_.size() - 1;
@@ -25,13 +26,15 @@ void VM::scan() {
         }
         line++;
     }
+    // 初始化 pc 栈
+    pc_st_.push(vm_code.size());
 
-#ifdef DEBUG
-    cout << "mark info: " << endl;
+    #ifdef DEBUG
+    cout << "============ mark info =============" << endl;
     for (auto &it : mark_) {
         cout << it.first << ": " << it.second << endl;
     }
-#endif
+    #endif
 
 }
 
@@ -77,11 +80,9 @@ void VM::eval() {
             }
             case Ins::PRINT : {
                 int argc = stoi(it.second) - 1;
-
                 string fstr = str_data[data_st_.top()];
                 data_st_.pop();
                 int len = fstr.size();
-
                 int i = 0;
                 while (i < len) {
                     if (fstr[i] == '%') {
@@ -92,14 +93,14 @@ void VM::eval() {
                     } else if (fstr[i] == '\\') {
                         i++;
                         if (fstr[i] == 'n') printf("\n");
-                        if (fstr[i] == 't') printf("\t");
-                        if (fstr[i] == '\\') printf("\\");
+                        else if (fstr[i] == 't') printf("\t");
+                        else if (fstr[i] == '\\') printf("\\");
                     } else {
                         printf("%c", fstr[i]);
                     }
                     i++;
                 }
-//                fflush(stdout);
+                // fflush(stdout);
                 break;
             }
             case Ins::RET : {
