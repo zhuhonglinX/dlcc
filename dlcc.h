@@ -57,21 +57,21 @@ enum class AstType : int {
 
 // 虚拟指令
 enum class Ins : int {
-    PUSHL,  // int 立即数压栈
-    PUSHS,  // str 常量压栈
-    PUSHV,  // var 变量压栈(int)
-    INT,
-    MOV,    // 变量出栈，存储(int)
-    LAB,    // label L0:
+    PUSHL,                      // int 立即数压栈
+    PUSHS,                      // str 常量压栈
+    PUSHV,                      // var 变量压栈(int)
+    INT,                    
+    MOV,                        // 变量出栈，存储(int)
+    LAB,                        // label L0:
     FUNC,
     CALL,
-    PRINT,  // printf 函数 %d
+    PRINT,                      // printf 函数 %d
     RET,
     JE, JMP,
     ADD, SUB, MUL, DIV, MOD,
     GT, GE, LT, LE,
-    AND, OR, XOR,               // & | ^
-    LAND, LOR,                  // && ||
+    AND, OR, XOR,               // "&", "|", "^"
+    LAND, LOR,                  // "&&", "||"
 };
 
 extern string content;                          // 源文件
@@ -79,16 +79,16 @@ extern vector<pair<Token, string>> tokens;      // tokens stream
 extern vector<AstNode *> ast_list;              // 语法树
 extern VarEnv *top_env;                         // 顶级作用域
 extern vector<string> str_data;                 // 字符串常量
-extern map<string, int> var_symbol;    // var 符号表，记录 int
-extern vector<string> func_symbol;              // 函数符号表
-//extern map<string, int> var_tbl;      // 记录 var 在符号表的位置
-//extern map<string, int> func_tbl;     // 记录 func 在符号表的位置
+extern map<string, int> var_symbol;             // var 符号表，记录 int
 extern string asm_code;                         // 汇编代码
-extern vector<pair<Ins, string>> vm_code;                     // 虚拟指令
+extern vector<pair<Ins, string>> vm_code;       // 虚拟指令
+
 extern map<Token, int> op_precedence;           // 符号优先级判定
 extern map<Token, string> kw_map;               // kw -> str
 extern map<string, Ins> ins_map;                // str -> Ins
 
+// debug usage
 extern void print_ast_type(AstType type);       // 打印 AstType
 extern void print_ins(Ins ins);                 // 打印 Ins
+
 #endif //MYCOMPILER_DLCC_H

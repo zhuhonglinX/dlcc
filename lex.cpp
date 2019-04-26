@@ -19,7 +19,7 @@ bool Lexer::lex() {
 Token Lexer::lex_token() {
     char cur_char = content[pos_++];
     // shift space and '\n'
-    while (cur_char == ' ' || cur_char == '\n') {
+    while (cur_char == ' ' || cur_char == '\n' || cur_char == '\t') {
         cur_char = content[pos_++];
     }
     // identifier

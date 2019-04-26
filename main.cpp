@@ -17,7 +17,6 @@ vector<AstNode *> ast_list;
 VarEnv *top_env = new VarEnv();
 vector<string> str_data;
 map<string, int> var_symbol;
-vector<string> func_symbol;
 string asm_code;
 vector<pair<Ins, string>> vm_code;
 
@@ -152,7 +151,7 @@ int main(int argc, char *argv[]) {
     istreambuf_iterator<char> end;
     content = string(begin, end);
 
-    // cout << content;
+    cout << content;
     Lexer lexer;
     if (!lexer.lex()) {
         printf("lex error\n");
