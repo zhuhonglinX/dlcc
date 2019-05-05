@@ -5,20 +5,20 @@
 #ifndef MYCOMPILER_LEX_H
 #define MYCOMPILER_LEX_H
 
+#include "dlcc.h"
 #include <iostream>
 #include <string>
 #include <vector>
-#include "dlcc.h"
 
 using namespace std;
 
 class Lexer {
     int pos_ = 0;
-public:
+
+  public:
     bool lex();
     Token lex_token();
     void lex_debug();
 };
 
-
-#endif //MYCOMPILER_LEX_H
+#endif // MYCOMPILER_LEX_H

@@ -68,137 +68,138 @@ Token Lexer::lex_token() {
     }
     // other
     switch (cur_char) {
-        case '\0': {
-            tokens.emplace_back(make_pair(Token::END_OF_FILE, "\0"));
-            return Token::END_OF_FILE;
-        }
-        case '=': {
-            // "=="
-            if (content[pos_] == '=') {
-                pos_++;
-                tokens.emplace_back(make_pair(Token::EQ, "=="));
-                return Token::EQ;
-            }
-            // '='
-            tokens.emplace_back(make_pair(Token::ASSIGN, "="));
-            return Token::ASSIGN;
-        }
-        case '>': {
-            // '>='
-            if (content[pos_] == '=') {
-                pos_++;
-                tokens.emplace_back(make_pair(Token::GE, ">="));
-                return Token::GE;
-            }
-            tokens.emplace_back(make_pair(Token::GT, ">"));
-            return Token::GT;
-        }
-        case '<': {
-            // "<="
-            if (content[pos_] == '=') {
-                pos_++;
-                tokens.emplace_back(make_pair(Token::LE, "<="));
-                return Token::LE;
-            }
-            tokens.emplace_back(make_pair(Token::LT, "<"));
-            return Token::LT;
-        }
-        case '+': {
-            tokens.emplace_back(make_pair(Token::ADD, "+"));
-            return Token::ADD;
-        }
-        case '-' : {
-            tokens.emplace_back(make_pair(Token::SUB, "-"));
-            return Token::SUB;
-        }
-        case '*': {
-            tokens.emplace_back(make_pair(Token::MUL, "*"));
-            return Token::MUL;
-        }
-        case '/': {
-            // 注释 "//"
-            if (content[pos_] == '/') {
-                while (content[pos_] != '\n') {
-                    pos_++;
-                }
-                return Token::COMMENT;
-            }
-            tokens.emplace_back(make_pair(Token::DIV, "/"));
-            return Token::DIV;
-        }
-        case '%': {
-            tokens.emplace_back(make_pair(Token::MOD, "%%"));
-            return Token::MOD;
-        }
-        case '&': {
-            // "&&"
-            if (content[pos_] == '&') {
-                pos_++;
-                tokens.emplace_back(make_pair(Token::LAND, "&&"));
-                return Token::LAND;
-            }
-            // "&"
-            tokens.emplace_back(make_pair(Token::AND, "&"));
-            return Token::AND;
-        }
-        case '|': {
-            // "||"
-            if (content[pos_] == '|') {
-                pos_++;
-                tokens.emplace_back(make_pair(Token::LOR, "||"));
-                return Token::LOR;
-            }
-            // "|"
-            tokens.emplace_back(make_pair(Token::OR, "|"));
-            return Token::OR;
-        }
-        case ';': {
-            tokens.emplace_back(make_pair(Token::SEMICON, ";"));
-            return Token::SEMICON;
-        }
-        case ',': {
-            tokens.emplace_back(make_pair(Token::COMMA, ","));
-            return Token::COMMA;
-        }
-            // string
-        case '"': {
-            string str;
-            cur_char = content[pos_++];
-            while (cur_char != '"' && pos_ < content.length()) {
-                str += cur_char;
-                cur_char = content[pos_++];
-            }
-            tokens.emplace_back(make_pair(Token::STRING, str));
-            return Token::STRING;
-        }
-        case '(': {
-            tokens.emplace_back(make_pair(Token::LPAREN, "("));
-            return Token::LPAREN;
-        }
-        case ')': {
-            tokens.emplace_back(make_pair(Token::RPAREN, ")"));
-            return Token::RPAREN;
-        }
-        case '{': {
-            tokens.emplace_back(make_pair(Token::LBRACE, "{"));
-            return Token::LBRACE;
-        }
-        case '}': {
-            tokens.emplace_back(make_pair(Token::RBRACE, "}"));
-            return Token::RBRACE;
-        }
-        default: {
-            // error
-            printf("lex_debug_info: cur_char is %c\n", cur_char);
-            return Token::ERR;
-        }
+    case '\0': {
+        tokens.emplace_back(make_pair(Token::END_OF_FILE, "\0"));
+        return Token::END_OF_FILE;
     }
+    case '=': {
+        // "=="
+        if (content[pos_] == '=') {
+            pos_++;
+            tokens.emplace_back(make_pair(Token::EQ, "=="));
+            return Token::EQ;
+        }
+        // '='
+        tokens.emplace_back(make_pair(Token::ASSIGN, "="));
+        return Token::ASSIGN;
+    }
+    case '>': {
+        // '>='
+        if (content[pos_] == '=') {
+            pos_++;
+            tokens.emplace_back(make_pair(Token::GE, ">="));
+            return Token::GE;
+        }
+        tokens.emplace_back(make_pair(Token::GT, ">"));
+        return Token::GT;
+    }
+    case '<': {
+        // "<="
+        if (content[pos_] == '=') {
+            pos_++;
+            tokens.emplace_back(make_pair(Token::LE, "<="));
+            return Token::LE;
+        }
+        tokens.emplace_back(make_pair(Token::LT, "<"));
+        return Token::LT;
+    }
+    case '+': {
+        tokens.emplace_back(make_pair(Token::ADD, "+"));
+        return Token::ADD;
+    }
+    case '-': {
+        tokens.emplace_back(make_pair(Token::SUB, "-"));
+        return Token::SUB;
+    }
+    case '*': {
+        tokens.emplace_back(make_pair(Token::MUL, "*"));
+        return Token::MUL;
+    }
+    case '/': {
+        // 注释 "//"
+        if (content[pos_] == '/') {
+            while (content[pos_] != '\n') {
+                pos_++;
+            }
+            return Token::COMMENT;
+        }
+        tokens.emplace_back(make_pair(Token::DIV, "/"));
+        return Token::DIV;
+    }
+    case '%': {
+        tokens.emplace_back(make_pair(Token::MOD, "%%"));
+        return Token::MOD;
+    }
+    case '&': {
+        // "&&"
+        if (content[pos_] == '&') {
+            pos_++;
+            tokens.emplace_back(make_pair(Token::LAND, "&&"));
+            return Token::LAND;
+        }
+        // "&"
+        tokens.emplace_back(make_pair(Token::AND, "&"));
+        return Token::AND;
+    }
+    case '|': {
+        // "||"
+        if (content[pos_] == '|') {
+            pos_++;
+            tokens.emplace_back(make_pair(Token::LOR, "||"));
+            return Token::LOR;
+        }
+        // "|"
+        tokens.emplace_back(make_pair(Token::OR, "|"));
+        return Token::OR;
+    }
+    case ';': {
+        tokens.emplace_back(make_pair(Token::SEMICON, ";"));
+        return Token::SEMICON;
+    }
+    case ',': {
+        tokens.emplace_back(make_pair(Token::COMMA, ","));
+        return Token::COMMA;
+    }
+    // string
+    case '"': {
+        string str;
+        cur_char = content[pos_++];
+        while (cur_char != '"' && pos_ < content.length()) {
+            str += cur_char;
+            cur_char = content[pos_++];
+        }
+        tokens.emplace_back(make_pair(Token::STRING, str));
+        return Token::STRING;
+    }
+    case '(': {
+        tokens.emplace_back(make_pair(Token::LPAREN, "("));
+        return Token::LPAREN;
+    }
+    case ')': {
+        tokens.emplace_back(make_pair(Token::RPAREN, ")"));
+        return Token::RPAREN;
+    }
+    case '{': {
+        tokens.emplace_back(make_pair(Token::LBRACE, "{"));
+        return Token::LBRACE;
+    }
+    case '}': {
+        tokens.emplace_back(make_pair(Token::RBRACE, "}"));
+        return Token::RBRACE;
+    }
+    default: {
+        // error
+        printf("lex_debug_info: cur_char is %c\n", cur_char);
+        return Token::ERR;
+    }
+    } // switch
 }
 
 void Lexer::lex_debug() {
     cout << "========= lex ========" << endl;
     for (auto it = tokens.begin(); it != tokens.end(); it++) {
-        cout << "type: " << (int) it->first << ";\tvalue: " << it->second << endl;
+        cout << "type: " << (int)it->first << ";\tvalue: " << it->second
+             << endl;
     }
     cout << "========================" << endl;
 }

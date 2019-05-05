@@ -23,7 +23,8 @@ void Parser::preprocess() {
     vector<pair<Token, string>> rst_tokens;
     get_next_token();
     while (cur_token_.first != Token::END_OF_FILE) {
-        if (cur_token_.first == Token::KW_INT && tokens[pos_ + 1].first != Token::LPAREN) {
+        if (cur_token_.first == Token::KW_INT &&
+            tokens[pos_ + 1].first != Token::LPAREN) {
             // 变量声明
             // int a, b;
             // int a = 10, b = 10;
@@ -31,17 +32,17 @@ void Parser::preprocess() {
             pair<Token, string> type = cur_token_;
             bool end_stat = false;
             vector<pair<Token, string>> tmp_tokens;
-            get_next_token();  // eat 'int'
+            get_next_token(); // eat 'int'
             while (true) {
-                rst_tokens.emplace_back(type);  // push type
-                rst_tokens.emplace_back(cur_token_);  // push id
+                rst_tokens.emplace_back(type);       // push type
+                rst_tokens.emplace_back(cur_token_); // push id
                 rst_tokens.emplace_back(make_pair(Token::SEMICON, ";"));
 
                 if (tokens[pos_].first == Token::ASSIGN) {
-                    tmp_tokens.emplace_back(cur_token_);  // push id
-                    get_next_token();  // eat id
-                    tmp_tokens.emplace_back(cur_token_);  // push '='
-                    get_next_token();  // eat '='
+                    tmp_tokens.emplace_back(cur_token_); // push id
+                    get_next_token();                    // eat id
+                    tmp_tokens.emplace_back(cur_token_); // push '='
+                    get_next_token();                    // eat '='
                     while (true) {
                         if (cur_token_.first == Token::SEMICON) {
                             end_stat = true;
@@ -54,17 +55,19 @@ void Parser::preprocess() {
                         get_next_token();
                     }
                     tmp_tokens.emplace_back(make_pair(Token::SEMICON, ";"));
-                } else if (tokens[pos_].first == Token:: SEMICON) {
+                } else if (tokens[pos_].first == Token::SEMICON) {
                     get_next_token(); // eat id
                     end_stat = true;
                 } else if (tokens[pos_].first == Token::COMMA) {
                     get_next_token(); // eat id
                 }
                 get_next_token(); // eat ";" or ","
-                if (end_stat) break;
+                if (end_stat)
+                    break;
             }
             // stat end
-            rst_tokens.insert(rst_tokens.end(), tmp_tokens.begin(), tmp_tokens.end());
+            rst_tokens.insert(rst_tokens.end(), tmp_tokens.begin(),
+                              tmp_tokens.end());
         } else {
             rst_tokens.emplace_back(cur_token_);
             get_next_token();
@@ -75,7 +78,8 @@ void Parser::preprocess() {
 #ifdef DEBUG
     cout << "========= preprocess ========" << endl;
     for (auto it = tokens.begin(); it != tokens.end(); it++) {
-        cout << "type: " << (int) it->first << ";\tvalue: " << it->second << endl;
+        cout << "type: " << (int)it->first << ";\tvalue: " << it->second
+             << endl;
     }
     cout << "=============================" << endl;
 #endif
@@ -102,7 +106,8 @@ AstNode *Parser::parse_number() {
 #ifdef DEBUG
     cout << "parse num: " << cur_token_.second << endl;
 #endif
-    // AstNode *result = new NumberAst(strtod(cur_token_.second.c_str(), nullptr));
+    // AstNode *result = new NumberAst(strtod(cur_token_.second.c_str(),
+    // nullptr));
     AstNode *rst = new NumAst(cur_token_.second);
     get_next_token();
     return rst;
@@ -122,21 +127,19 @@ AstNode *Parser::parse_statement() {
     cout << "parse statement: " << cur_token_.second << endl;
 #endif
     switch (cur_token_.first) {
-        case Token::KW_IF: {
-            return parse_if_exp();
-        }
-        case Token::KW_WHILE: {
-            return parse_while_exp();
-        }
-        case Token::KW_INT: {
-            return parse_dec();
-        }
-        case Token::KW_RET: {
-            return parse_func_ret();
-        }
-        default: {
-            return parse_expression();
-        }
+    case Token::KW_IF: {
+        return parse_if_exp();
+    }
+    case Token::KW_WHILE: {
+        return parse_while_exp();
+    }
+    case Token::KW_INT: {
+        return parse_dec();
+    }
+    case Token::KW_RET: {
+        return parse_func_ret();
+    }
+    default: { return parse_expression(); }
     }
 }
 
@@ -149,7 +152,7 @@ AstNode *Parser::parse_dec() {
     if (aheadToken == Token::LPAREN) {
         return parse_func_dec();
     }
-        // variable declaration
+    // variable declaration
     else {
         return parse_var_dec();
     }
@@ -160,26 +163,26 @@ AstNode *Parser::parse_func_dec() {
     cout << "parseFuncDec: " << cur_token_.second << endl;
 #endif
     Token type = cur_token_.first;
-    get_next_token();                 // eat function return value type
+    get_next_token(); // eat function return value type
     string name = cur_token_.second;
-    get_next_token();                 // eat function name
+    get_next_token(); // eat function name
     vector<pair<Token, string>> args;
 
     if (tokens[pos_].first != Token::RPAREN) {
         // if function has argument
         do {
-            get_next_token();         // eat '(' or ','
+            get_next_token(); // eat '(' or ','
             Token varType = cur_token_.first;
-            get_next_token();         // eat type name
+            get_next_token(); // eat type name
             string varName = cur_token_.second;
-            get_next_token();         // eat arg name
+            get_next_token(); // eat arg name
             args.emplace_back(make_pair(varType, varName));
         } while (cur_token_.first != Token::RPAREN);
     } else {
         // else function has no argument
-        get_next_token();         // eat '('
+        get_next_token(); // eat '('
     }
-    get_next_token();             // eat ')'
+    get_next_token(); // eat ')'
     AstNode *block = parse_block();
     return new FuncAst(type, name, args, block);
 }
@@ -200,7 +203,7 @@ AstNode *Parser::parse_block() {
     cout << "parse_block: " << cur_token_.second << endl;
 #endif
     get_next_token(); // eat '{'
-    vector<AstNode*> stats;
+    vector<AstNode *> stats;
     while (cur_token_.first != Token::RBRACE) {
         AstNode *newStat = parse_statement();
         if (newStat) {
@@ -214,15 +217,15 @@ AstNode *Parser::parse_block() {
 
 AstNode *Parser::parse_if_exp() {
 #ifdef DEBUG
-    cout << "parse if exp: " << cur_token_.second <<  endl;
+    cout << "parse if exp: " << cur_token_.second << endl;
 #endif
-    get_next_token();  // eat "if"
+    get_next_token(); // eat "if"
     AstNode *cond = parse_paren_exp();
     AstNode *if_block = parse_block();
     AstNode *else_block = nullptr;
     if (cur_token_.first == Token::KW_ELSE) {
         // not support "else if" yet
-        get_next_token();  // eat "else"
+        get_next_token(); // eat "else"
         else_block = parse_block();
     }
     return new IfExpAst(cond, if_block, else_block);
@@ -230,24 +233,25 @@ AstNode *Parser::parse_if_exp() {
 
 AstNode *Parser::parse_while_exp() {
 #ifdef DEBUG
-    cout << "parse if exp: " << cur_token_.second <<  endl;
+    cout << "parse if exp: " << cur_token_.second << endl;
 #endif
-    get_next_token();  // eat "while"
+    get_next_token(); // eat "while"
     AstNode *cond = parse_paren_exp();
     AstNode *block = parse_block();
-    return new WhileExpAst(cond, block);;
+    return new WhileExpAst(cond, block);
+    ;
 }
 
 AstNode *Parser::parse_paren_exp() {
 #ifdef DEBUG
     cout << "parse_paren_exp: " << cur_token_.second << endl;
 #endif
-    get_next_token();  // eat '('
+    get_next_token(); // eat '('
     AstNode *exp = parse_expression();
     if (cur_token_.first != Token::RPAREN) {
         cout << "expected ')'" << endl;
     }
-    get_next_token();  // eat ')'
+    get_next_token(); // eat ')'
     return exp;
 }
 
@@ -260,58 +264,58 @@ AstNode *Parser::parse_expression() {
     while (true) {
         Token tmp = cur_token_.first;
         switch (tmp) {
-            case Token::NUMBER: {
-                ast_stack.push(parse_number());
-                break;
+        case Token::NUMBER: {
+            ast_stack.push(parse_number());
+            break;
+        }
+            // func call or var
+        case Token::IDENTIFIER: {
+            ast_stack.push(parse_identifier());
+            break;
+        }
+        case Token::STRING: {
+            ast_stack.push(parse_string());
+            break;
+        }
+            // only func call -> f(a, b, c)
+        case Token::COMMA: {
+            get_next_token(); // eat ,
+            return deal_exp_stack(ast_stack, op_stack);
+        }
+        case Token::SEMICON: {
+            get_next_token(); // eat ';'
+            return deal_exp_stack(ast_stack, op_stack);
+        }
+            // '('
+        case Token::LPAREN: {
+            ast_stack.push(parse_paren_exp());
+            break;
+        }
+            // ')'
+        case Token::RPAREN: {
+            return deal_exp_stack(ast_stack, op_stack);
+        }
+            // op
+        default: {
+            cout << "op: " << kw_map[tmp] << endl;
+            if (!op_stack.empty() &&
+                (op_precedence[op_stack.top()] >= op_precedence[tmp])) {
+                Token op = op_stack.top();
+                op_stack.pop();
+                AstNode *left, *right;
+                right = ast_stack.top();
+                ast_stack.pop();
+                left = ast_stack.top();
+                ast_stack.pop();
+                BinExpAst *ast = new BinExpAst(op, left, right);
+                ast_stack.push(ast);
             }
-                // func call or var
-            case Token::IDENTIFIER: {
-                ast_stack.push(parse_identifier());
-                break;
-            }
-            case Token::STRING: {
-                ast_stack.push(parse_string());
-                break;
-            }
-                // only func call -> f(a, b, c)
-            case Token::COMMA: {
-                get_next_token();  // eat ,
-                return deal_exp_stack(ast_stack, op_stack);
-            }
-            case Token::SEMICON: {
-                get_next_token();  // eat ';'
-                return deal_exp_stack(ast_stack, op_stack);
-            }
-                // '('
-            case Token::LPAREN: {
-                ast_stack.push(parse_paren_exp());
-                break;
-            }
-                // ')'
-            case Token::RPAREN: {
-                return deal_exp_stack(ast_stack, op_stack);
-            }
-                // op
-            default: {
-                cout << "op: " << kw_map[tmp] << endl;
-                if (!op_stack.empty() &&
-                    (op_precedence[op_stack.top()] >= op_precedence[tmp])) {
-                    Token op = op_stack.top();
-                    op_stack.pop();
-                    AstNode *left, *right;
-                    right = ast_stack.top();
-                    ast_stack.pop();
-                    left = ast_stack.top();
-                    ast_stack.pop();
-                    BinExpAst *ast = new BinExpAst(op, left, right);
-                    ast_stack.push(ast);
-                }
-                op_stack.push(tmp);
-                get_next_token();
-                break;
-            }
-        }  // switch
-    }  // while
+            op_stack.push(tmp);
+            get_next_token();
+            break;
+        }
+        } // switch
+    }     // while
 }
 
 AstNode *Parser::parse_identifier() {
@@ -326,8 +330,8 @@ AstNode *Parser::parse_identifier() {
     }
     // function call
     get_next_token(); // eat '('
-    vector<AstNode*> args;
-    while (cur_token_.first != Token::RPAREN) {  // match token ")"
+    vector<AstNode *> args;
+    while (cur_token_.first != Token::RPAREN) { // match token ")"
         AstNode *arg = parse_expression();
         if (arg) {
             args.emplace_back(arg);
@@ -349,8 +353,9 @@ AstNode *Parser::parse_func_ret() {
     return new ReturnAst(retExp);
 }
 
-AstNode *Parser::deal_exp_stack(stack<AstNode *> &ast_stack, stack<Token> &op_stack) {
-    while(!op_stack.empty()) {
+AstNode *Parser::deal_exp_stack(stack<AstNode *> &ast_stack,
+                                stack<Token> &op_stack) {
+    while (!op_stack.empty()) {
         Token op = op_stack.top();
         op_stack.pop();
         AstNode *left, *right;
@@ -366,4 +371,3 @@ AstNode *Parser::deal_exp_stack(stack<AstNode *> &ast_stack, stack<Token> &op_st
     else
         return nullptr;
 }
-

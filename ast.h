@@ -5,21 +5,21 @@
 #ifndef MYCOMPILER_AST_H
 #define MYCOMPILER_AST_H
 
-#include <vector>
 #include "dlcc.h"
 #include "env.h"
+#include <vector>
 
 using namespace std;
 
 class AstNode {
-public:
-    virtual ~AstNode() {};
+  public:
+    virtual ~AstNode(){};
     virtual void print() {}
     virtual AstType get_ast_type() = 0;
 };
 
 class NumAst : public AstNode {
-public:
+  public:
     string value_;
     VarEnv *env_ = nullptr;
 
@@ -27,25 +27,23 @@ public:
 
     AstType get_ast_type() override { return AstType::NUM; }
     void print() override;
-
 };
 
 class StrAst : public AstNode {
-public:
+  public:
     string value_;
     VarEnv *env_ = nullptr;
-    int data_offset_;  // 表示 str 存储的地址(str_data的偏移)
+    int data_offset_; // 表示 str 存储的地址(str_data的偏移)
 
     explicit StrAst(const string &value) : value_(value) {}
 
     AstType get_ast_type() override { return AstType::STR; }
 
     void print() override;
-
 };
 
 class VarAst : public AstNode {
-public:
+  public:
     string name_;
     VarEnv *env_ = nullptr;
 
@@ -58,7 +56,7 @@ public:
 
 // "int a"
 class VarDecAst : public AstNode {
-public:
+  public:
     string name_;
     Token type_;
     VarEnv *env_ = nullptr;
@@ -70,13 +68,13 @@ public:
 };
 
 class BinExpAst : public AstNode {
-public:
+  public:
     Token op_;
     AstNode *lt_, *rt_;
     VarEnv *env_ = nullptr;
 
-
-    explicit BinExpAst(Token op, AstNode *lt, AstNode *rt) : op_(op), lt_(lt), rt_(rt) {}
+    explicit BinExpAst(Token op, AstNode *lt, AstNode *rt)
+        : op_(op), lt_(lt), rt_(rt) {}
 
     ~BinExpAst() override;
 
@@ -85,34 +83,36 @@ public:
 };
 
 class IfExpAst : public AstNode {
-public:
+  public:
     AstNode *cond_, *if_block_, *else_block_;
     VarEnv *env_ = nullptr;
 
-
     explicit IfExpAst(AstNode *cond, AstNode *if_block, AstNode *else_block)
-            : cond_(cond), if_block_(if_block), else_block_(else_block) {}
+        : cond_(cond), if_block_(if_block), else_block_(else_block) {}
 
-    ~IfExpAst() override ;
+    ~IfExpAst() override;
 
     AstType get_ast_type() override { return AstType::IfExp; }
     void print() override;
 };
 
 class WhileExpAst : public AstNode {
-public:
+  public:
     AstNode *cond_, *block_;
     VarEnv *env_ = nullptr;
 
-    explicit WhileExpAst(AstNode *cond, AstNode *block) : cond_(cond), block_(block) {}
-    ~WhileExpAst() override  {delete cond_; delete block_;}
+    explicit WhileExpAst(AstNode *cond, AstNode *block)
+        : cond_(cond), block_(block) {}
+    ~WhileExpAst() override {
+        delete cond_;
+        delete block_;
+    }
 
     AstType get_ast_type() override { return AstType::WhileExp; }
-
 };
 
 class BlockAst : public AstNode {
-public:
+  public:
     vector<AstNode *> stats_;
     VarEnv *env_ = nullptr;
 
@@ -125,23 +125,22 @@ public:
 };
 
 class CallFuncAst : public AstNode {
-public:
+  public:
     string fname_;
     vector<AstNode *> args_;
     VarEnv *env_ = nullptr;
 
-
-    explicit CallFuncAst(string &fname, vector<AstNode *> &args) : fname_(fname), args_(args) {}
+    explicit CallFuncAst(string &fname, vector<AstNode *> &args)
+        : fname_(fname), args_(args) {}
 
     ~CallFuncAst() override;
 
     AstType get_ast_type() override { return AstType::CALLFUNC; }
     void print() override;
-
 };
 
 class ReturnAst : public AstNode {
-public:
+  public:
     AstNode *ret_value_;
     VarEnv *env_ = nullptr;
 
@@ -154,22 +153,21 @@ public:
 };
 
 class FuncAst : public AstNode {
-public:
+  public:
     Token type_;
     string name_;
     vector<pair<Token, string>> args_;
     AstNode *block_ast_;
     VarEnv *env_ = nullptr;
 
-
-    explicit FuncAst(Token type, string &name, vector<pair<Token, string>> &args, AstNode *block)
-            : type_(type), name_(name), args_(args), block_ast_(block) {}
+    explicit FuncAst(Token type, string &name,
+                     vector<pair<Token, string>> &args, AstNode *block)
+        : type_(type), name_(name), args_(args), block_ast_(block) {}
 
     ~FuncAst() override { delete block_ast_; }
 
     AstType get_ast_type() override { return AstType::FUNC; }
     void print() override;
-
 };
 
-#endif //MYCOMPILER_AST_H
+#endif // MYCOMPILER_AST_H
