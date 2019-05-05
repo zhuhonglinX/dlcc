@@ -2,5 +2,5 @@ cmake-build-debug
 .idea
 .vscode
 build
+*.s
 .DS_Store
-./doc/.DS_Store
