@@ -5,16 +5,16 @@
 #ifndef MYCOMPILER_VM_H
 #define MYCOMPILER_VM_H
 
+#include "dlcc.h"
 #include <iostream>
 #include <map>
-#include <string>
-#include <stack>
 #include <sstream>
-#include "dlcc.h"
+#include <stack>
+#include <string>
 using namespace std;
 
 class VM {
-public:
+  public:
     int pc = 0;
     int cur_fptr = 0;
 
@@ -23,12 +23,9 @@ public:
     stack<int> pc_st_;
     map<string, int> mark_;
 
-
     void run();
     void scan();
     void eval();
-
 };
 
-
-#endif //MYCOMPILER_VM_H
+#endif // MYCOMPILER_VM_H

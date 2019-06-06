@@ -106,8 +106,7 @@ AstNode *Parser::parse_number() {
 #ifdef DEBUG
     cout << "parse num: " << cur_token_.second << endl;
 #endif
-    // AstNode *result = new NumberAst(strtod(cur_token_.second.c_str(),
-    // nullptr));
+    // AstNode *result = new NumberAst(strtod(cur_token_.second.c_str(), nullptr));
     AstNode *rst = new NumAst(cur_token_.second);
     get_next_token();
     return rst;
@@ -148,12 +147,9 @@ AstNode *Parser::parse_dec() {
     cout << "parseDec: " << cur_token_.second << endl;
 #endif
     Token aheadToken = tokens[pos_ + 1].first;
-    // function declaration
-    if (aheadToken == Token::LPAREN) {
+    if (aheadToken == Token::LPAREN) { // function declaration
         return parse_func_dec();
-    }
-    // variable declaration
-    else {
+    } else { // variable declaration
         return parse_var_dec();
     }
 }
@@ -224,7 +220,6 @@ AstNode *Parser::parse_if_exp() {
     AstNode *if_block = parse_block();
     AstNode *else_block = nullptr;
     if (cur_token_.first == Token::KW_ELSE) {
-        // not support "else if" yet
         get_next_token(); // eat "else"
         else_block = parse_block();
     }
@@ -257,7 +252,7 @@ AstNode *Parser::parse_paren_exp() {
 
 AstNode *Parser::parse_expression() {
 #ifdef DEBUG
-    cout << "parse_expressionn: " << cur_token_.second << endl;
+    cout << "parse_expression: " << cur_token_.second << endl;
 #endif
     stack<AstNode *> ast_stack;
     stack<Token> op_stack;
