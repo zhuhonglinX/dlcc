@@ -23,6 +23,12 @@ void Parser::preprocess() {
     vector<pair<Token, string>> rst_tokens;
     get_next_token();
     while (cur_token_.first != Token::END_OF_FILE) {
+        if (cur_token_.first == Token::LPAREN) {
+            while (cur_token_.first != Token::RPAREN) {
+                rst_tokens.emplace_back(cur_token_);
+                get_next_token();
+            }
+        }
         if (cur_token_.first == Token::KW_INT &&
             tokens[pos_ + 1].first != Token::LPAREN) {
             // 变量声明

@@ -142,6 +142,9 @@ void print_ins(Ins ins) {
     case Ins::LE:
         printf("LE ");
         break;
+    case Ins::EQ:
+        printf("EQ ");
+        break;
     case Ins::LAND:
         printf("LAND ");
         break;
@@ -213,7 +216,7 @@ int main(int argc, char *argv[]) {
     lexer.lex_debug();
 
     Parser parser;
-    // parser.preprocess();
+    parser.preprocess();
     parser.parse();
     parser.parse_debug();
 

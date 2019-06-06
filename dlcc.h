@@ -69,7 +69,7 @@ enum class Ins : int {
     RET,
     JE, JMP,
     ADD, SUB, MUL, DIV, MOD,
-    GT, GE, LT, LE,
+    GT, GE, LT, LE, EQ,
     AND, OR, XOR,               // "&", "|", "^"
     LAND, LOR,                  // "&&", "||"
 };
